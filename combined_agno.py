@@ -30,7 +30,8 @@ class TargetFile:
         self.file_info = list()
         self.func_list = list()
         self.decomp_funcs = dict()
-        self.decomp_funcs2 = dict()
+        # self.decomp_funcs2 = dict()
+        self.decomp_funcs2 = list()
         self.nx_graph = None
         self.gv_graph = None
         self.out_path = None
@@ -62,11 +63,21 @@ class TargetFile:
             decomp_code = self.r2_pipe.cmd(f"s @ {func['offset']}; pdg")
             print(f">>>>Decompiled code:\n{decomp_code}")
             if ask_llm:
-                decomp_code = self.rewrite_decomp_code(decomp_code)
+                response = self.rewrite_decomp_code(decomp_code)
+                # decomp_code = response.content.decode('utf-8')
+                decomp_code = response.content
                 print(f">>>>Rewritten decompiled code:\n{decomp_code}")
-            self.decomp_funcs2.update({'offset' : hex(func['offset']),
+                # for chunk in decomp_code:
+                #     print(f">>>>Rewritten decompiled code:\n{chunk}")
+            # self.decomp_funcs2.update({'offset' : hex(func['offset']),
+            #                            'name' : func['name'],
+            #                             'decomp_code' : decomp_code})
+            self.decomp_funcs2.append({'offset' : hex(func['offset']),
                                        'name' : func['name'],
                                         'decomp_code' : decomp_code})
+        print()
+        print(f">>>>Decompiled functions:\n{self.decomp_funcs2}")
+        print()
             
     def write_output_single_file(self):
         # Write self.decomp_funcs to a single file  
@@ -116,28 +127,37 @@ class TargetFile:
 		# strings from comments like 'string:'"""
         # )
         # return response['response']
-        agent.print_response("""Rewrite this function found in {decomp_code} and respond ONLY with code, replace goto/labels
+        # agent.print_response(f"""Rewrite this function found in {decomp_code} and respond ONLY with code, replace goto/labels
+		# with if/else/for, use NO explanations, NO markdown, Simplify as much as
+		# possible, use better variable names, take function arguments and
+		# strings from comments like 'string:'""", stream=True)
+
+        run_response = agent.run(f"""Rewrite this function found in {decomp_code} and respond ONLY with code, replace goto/labels
 		with if/else/for, use NO explanations, NO markdown, Simplify as much as
 		possible, use better variable names, take function arguments and
-		strings from comments like 'string:'""", stream=True)
+		strings from comments like 'string:'""", stream=False)
+        return run_response
 
     def explain_code(self):
-        # Get c source code from in_path
-        with open(self.out_path, 'r') as file:
-            c_code = file.read()
+        # Create a directory for the output files
+        dir_name = dirname(self.file_path)
+        explanations_dir = join(dir_name, f"{basename(self.file_path)}_explanations")
+        if isdir(explanations_dir):
+            # Delete the directory and all its contents
+            shutil.rmtree(explanations_dir)
+        # Make a new directory to house the func files
+        os.mkdir(explanations_dir)
 
-        agent.print_response(f"""Analyze the C code found in {c_code} and explain:
-        1. What does this code do?
-        2. Key functions and their purposes
-        3. Important variables and data structures
-        4. The overall logic flow
-        5. Find malicious functionality?
-        6. Find obfuscation techniques?
-        7. Find potential security issues?
-        """, stream=True)
-        # response = ollama.generate(
-        #     model='gemma3',
-        #     prompt=f"""Analyze the C code found in {c_code} and explain:
+        # Load the JSON file
+        with open(self.out_path, 'r') as file:
+            decompiled_funcs = json.load(file)
+
+        # Get 'decomp_code' from each function in decompiled_funcs
+        for func in decompiled_funcs:
+            decomp_code = func['decomp_code']
+            func_name = func['name']
+            func_offset = func['offset']
+        #     agent.print_response(f"""Analyze the C code found in {decomp_code} and explain:
         # 1. What does this code do?
         # 2. Key functions and their purposes
         # 3. Important variables and data structures
@@ -145,24 +165,70 @@ class TargetFile:
         # 5. Find malicious functionality?
         # 6. Find obfuscation techniques?
         # 7. Find potential security issues?
-        # """
-        # )
-    #     prompt=f"""Analyze the C code found in {c_code} and explain:
-    # 1. Find malicious functionality?
-    # 2. Find obfuscation techniques?
-    # 3. Find potential security issues?
-    # 4. Find potential performance issues?
-    # 5. Find potential memory issues?
-    # 6. Find potential code duplication?
-    # 7. Find potential code readability issues?
-    # """
-    #     prompt=f"""Analyze the C code found in {c_code} and explain:
-    # 1. Find malicious functionality?
-    # 2. Find obfuscation techniques?
-    # 3. Find potential security issues?
-    # """
-    #     )
-        # print(response['response'])
+        # """, stream=True)
+            print(f">>>>Searching {func_name} ({func_offset}):\n{decomp_code}")
+            run_response = agent.run(f"""Analyze the C code found in {decomp_code} and explain:
+        1. What does this code do?
+        2. Key functions and their purposes
+        3. Important variables and data structures
+        4. The overall logic flow
+        5. Find malicious functionality?
+        6. Find obfuscation techniques?
+        7. Find potential security issues?
+        """, stream=False)
+            
+            # explained_code = run_response.content.decode('utf-8')
+            explained_code = run_response.content
+            print(f">>>>Explained code:\n{explained_code}")
+            func['explained_code'] = explained_code
+            with open(join(explanations_dir, f"{func_name}.txt"), "w") as f:
+                f.write(explained_code)       
+        
+    #     # Get c source code from in_path
+    #     with open(self.out_path, 'r') as file:
+    #         c_code = file.read()
+
+    #     # Get the function list
+    #     with open(self.out_path, 'r') as file:
+    #         func_list = file.read()
+
+    #     agent.print_response(f"""Analyze the C code found in {c_code} and explain:
+    #     1. What does this code do?
+    #     2. Key functions and their purposes
+    #     3. Important variables and data structures
+    #     4. The overall logic flow
+    #     5. Find malicious functionality?
+    #     6. Find obfuscation techniques?
+    #     7. Find potential security issues?
+    #     """, stream=True)
+    #     # response = ollama.generate(
+    #     #     model='gemma3',
+    #     #     prompt=f"""Analyze the C code found in {c_code} and explain:
+    #     # 1. What does this code do?
+    #     # 2. Key functions and their purposes
+    #     # 3. Important variables and data structures
+    #     # 4. The overall logic flow
+    #     # 5. Find malicious functionality?
+    #     # 6. Find obfuscation techniques?
+    #     # 7. Find potential security issues?
+    #     # """
+    #     # )
+    # #     prompt=f"""Analyze the C code found in {c_code} and explain:
+    # # 1. Find malicious functionality?
+    # # 2. Find obfuscation techniques?
+    # # 3. Find potential security issues?
+    # # 4. Find potential performance issues?
+    # # 5. Find potential memory issues?
+    # # 6. Find potential code duplication?
+    # # 7. Find potential code readability issues?
+    # # """
+    # #     prompt=f"""Analyze the C code found in {c_code} and explain:
+    # # 1. Find malicious functionality?
+    # # 2. Find obfuscation techniques?
+    # # 3. Find potential security issues?
+    # # """
+    # #     )
+    #     # print(response['response'])
 
     # TODO: Untested!! NEED TO TEST
     def build_call_graph(self):
@@ -187,7 +253,7 @@ def main(in_path):
     bin_file.write_output_single_file()
     # bin_file.write_output_multiple_files()
     # bin_file.build_call_graph()
-    bin_file.explain_code(in_path)
+    bin_file.explain_code()
 
     bin_file.cleanup()
 

@@ -1,0 +1,52 @@
+[
+    {
+        "offset": "0x1050",
+        "name": "sym.imp.printf",
+        "decomp_code": "```c\nvoid handle_printf() {\n    if (0x1054 == 0x00001054) {\n        if (true) {\n            // Assuming '_reloc.printf' is a function pointer\n            // and a call to it needs to be handled.\n            \n            //Simulate call to _reloc.printf\n            \n            //Placeholder for printf execution\n            printf(\"Simulated printf execution\\n\");\n            \n            return;\n        }\n    } else {\n        printf(\"Initial printf execution\\n\");\n        return;\n    }\n}\n```"
+    },
+    {
+        "offset": "0x1060",
+        "name": "entry0",
+        "decomp_code": "```c\nvoid entry0(ulong param_1, ulong param_2, ulong param_3) {\n  ulong retaddr = 0x20 + -0x18;\n  uchar stack_8[8];\n  uchar* stack_18 = stack_8;\n  ulong main_retaddr = 0x20 + -0x18;\n\n  if (main_retaddr == 0x20 + -0x18) {\n    (*_reloc.__libc_start_main)(main, main_retaddr, &stack0x00000008, 0, 0, param_3);\n  } else {\n    for (;;) {\n    }\n  }\n}\n```"
+    },
+    {
+        "offset": "0x1090",
+        "name": "sym.deregister_tm_clones",
+        "decomp_code": "```c\nvoid deregisterTmClones(void) {\n  if ((false) && (_reloc._ITM_deregisterTMCloneTable != NULL)) {\n    // WARNING: Could not recover jumptable at 0x000010af. Too many branches\n    // WARNING: Treating indirect jump as call\n    if (_reloc._ITM_deregisterTMCloneTable != NULL) {\n      (_reloc._ITM_deregisterTMCloneTable)();\n      return;\n    }\n  }\n  return;\n}\n```\n"
+    },
+    {
+        "offset": "0x10c0",
+        "name": "sym.register_tm_clones",
+        "decomp_code": "```c\nvoid register_tm_clones(void) {\n  if (( (obj.completionCount >> 2) - (obj.completionCount >> 31) != 0) && (_reloc.itmCloneTablePtr != NULL)) {\n    // Treating indirect jump as call\n    //return;\n    if (itmCloneTablePtr != NULL) {\n      (*itmCloneTablePtr)();\n    }\n    return;\n  }\n  return;\n}\n```"
+    },
+    {
+        "offset": "0x1100",
+        "name": "entry.fini0",
+        "decomp_code": "```c\nvoid entry_fini0(void) {\n    char completed_string[1];\n    char* stack_ptr;\n    uint32_t dso_handle;\n    int32_t result;\n\n    if (completed_string[0] == '\\0') {\n        stack_ptr = &stack0x00000000 + -8;\n        dso_handle = _obj.__dso_handle;\n        if (_reloc.__cxa_finalize + 0 != 0) {\n            result = fcn00001040(dso_handle);\n            stack_ptr = &stack0x00000000 + -8;\n        }\n        *(uint32_t*)stack_ptr = 0x112c;\n        sym_deregister_tm_clones();\n        completed_flag = 1;\n        return;\n    }\n    return;\n}\n```\n"
+    },
+    {
+        "offset": "0x1040",
+        "name": "fcn.00001040",
+        "decomp_code": "```c\nvoid fcn_00001040(void)\n{\n    if (1 == 0)\n    {\n        // Attempt to execute cxa_finalize.\n        // Treat indirect jump as call.\n        void (*_reloc_cxa_finalize)() = (_reloc.__cxa_finalize);\n        if (NULL != _reloc_cxa_finalize)\n        {\n            _reloc_cxa_finalize();\n        }\n        return;\n    }\n    else\n    {\n        return;\n    }\n}\n```"
+    },
+    {
+        "offset": "0x1140",
+        "name": "entry.init0",
+        "decomp_code": "```c\nvoid entry_initialize(void) {\n    if (( (obj.completion_count >> 21) - (obj.completion_count >> 31) != 0) &&\n        (obj.instrumentation_table != NULL)) {\n        // WARNING: Could not recover jumptable at 0x000010f0. Too many branches\n        // WARNING: Treating indirect jump as call\n        (void)(*_reloc.tm_clone_table);\n        return;\n    }\n    return;\n}\n```\n"
+    },
+    {
+        "offset": "0x116c",
+        "name": "sym._fini",
+        "decomp_code": "```c\nvoid system_finalization(void) {\n    // No operations needed.  Simply return.\n    return;\n}\n```\n"
+    },
+    {
+        "offset": "0x1149",
+        "name": "main",
+        "decomp_code": "```c\nulong main(void) {\n    ulong stack_variable;\n    \n    if (*(uint32_t*)0x20 - 0x10 == 0x1165) {\n        printf(\"Hello World!\");\n    } else {\n        printf(\"Error: Invalid address or value at 0x20 - 0x10\");\n    }\n    return 0;\n}\n```\n"
+    },
+    {
+        "offset": "0x1000",
+        "name": "sym._init",
+        "decomp_code": "```c\nvoid sym_init(void) {\n    ulong stack_buffer[2];\n    if (reloc_gmon_start != NULL) {\n        *((ulong *) (0x20 - 8 - 8)) = 0x1016;\n        reloc_gmon_start();\n    }\n    return;\n}\n```"
+    }
+]

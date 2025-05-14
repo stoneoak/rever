@@ -1,0 +1,52 @@
+[
+    {
+        "offset": "0x1050",
+        "name": "sym.imp.printf",
+        "decomp_code": "```c\nvoid handle_printf() {\n    if (0x1054 == 0x00001054) {\n        if (true) {\n            // Handle potential jumptable issue\n            return;\n        }\n    } else {\n        //Treat indirect jump as call\n        return;\n    }\n}\n```\n"
+    },
+    {
+        "offset": "0x1060",
+        "name": "entry0",
+        "decomp_code": "```c\nvoid entry0(ulong arg1, ulong arg2, ulong arg3) {\n    ulong retAddr;\n    uchar stack8[8];\n    uchar *stack18[2];\n    stack18[1] = stack8;\n    \n    * (uintptr_t(0x20) - 0x18) = 0x1085;\n    \n    ((void (*)(int, ulong, void **)(int, ulong, void **))(__builtin_printf)(main, retAddr, (void**)stack18, arg3));\n    \n    for (int i = 0; i < 100000; ++i) {\n        // Do nothing block with infinite loop\n    }\n}\n```"
+    },
+    {
+        "offset": "0x1090",
+        "name": "sym.deregister_tm_clones",
+        "decomp_code": "```c\nvoid deregister_tm_clones(void)\n{\n    if (_reloc._ITM_deregisterTMCloneTable != NULL)\n    {\n        // Handle potential ITM jump table issues\n        if (_reloc._ITM_deregisterTMCloneTable != NULL)\n        {\n            (*_reloc._ITM_deregisterTMCloneTable)();\n            return;\n        }\n    }\n    return;\n}\n```"
+    },
+    {
+        "offset": "0x10c0",
+        "name": "sym.register_tm_clones",
+        "decomp_code": "```c\nvoid sym_register_tm_clones(void) {\n    if (( (obj.completion_count & 0x3FF) - (obj.completion_count & 0x3FF) ) != 0 &&\n       (_reloc.tm_clone_table != NULL)) {\n        // Potential error during jumptable recovery\n        // Treat indirect jump as call\n        (_reloc.tm_clone_table)( );\n        return;\n    }\n    return;\n}\n```"
+    },
+    {
+        "offset": "0x1100",
+        "name": "entry.fini0",
+        "decomp_code": "```c\nvoid entry_fini(void) {\n  char completed_string[1];\n  char* completed = completed_string;\n  char* var1;\n  int handle;\n\n  if (*completed == '\\0') {\n    var1 = (char*)&stack0xfffffffffffffff8;\n    handle = _reloc.__cxa_finalize + 0;\n\n    if (handle != 0) {\n      fcn.00001040(obj.__dso_handle);\n      var1 = (char*)&stack0x00000000 + -8;\n    }\n\n    *(var1 + -8) = 0x112c;\n    sym.deregister_tm_clones();\n    obj.completed.0 = 0x1;\n    return;\n  }\n\n  return;\n}\n```"
+    },
+    {
+        "offset": "0x1040",
+        "name": "fcn.00001040",
+        "decomp_code": "```c\nvoid fcn_00001040(void)\n{\n    if (1 == 0)\n    {\n        // Code execution prevented due to error.\n        // Handling indirect jump as a function call.\n        call_cxa_finalize();\n    }\n    return;\n}\n```\n"
+    },
+    {
+        "offset": "0x1140",
+        "name": "entry.init0",
+        "decomp_code": "```c\nvoid entry_initialize(void) {\n    if (( (obj.completion_count >> 21) - (obj.completion_count >> 31) != 0 ) &&\n        (obj.relocation_tmCloneTable != NULL)) {\n        // Handling potential jumptable recovery failure\n        (obj.relocation_tmCloneTable)();\n        return;\n    }\n    return;\n}\n```\n"
+    },
+    {
+        "offset": "0x116c",
+        "name": "sym._fini",
+        "decomp_code": "```c\nvoid systemFinishInitialization(void) {\n    // Empty function - no further operations are needed.\n    return;\n}\n```\n"
+    },
+    {
+        "offset": "0x1149",
+        "name": "main",
+        "decomp_code": "```c\nulong main(void) {\n    ulong stack_variable;\n    \n    if (*(uint32_t*)0x20 - 0x10 == 0x1165) {\n        printf(\"Hello World!\");\n    } else {\n        printf(\"Hello World!\");\n    }\n\n    return 0;\n}\n```\n"
+    },
+    {
+        "offset": "0x1000",
+        "name": "sym._init",
+        "decomp_code": "```c\nvoid _init(void) {\n  unsigned long stack_buffer[2];\n  \n  if (reloc.__gmon_start__ != NULL) {\n    stack_buffer[0] = 0x1016;\n    stack_buffer[1] = 0x1016;\n    \n    if (reloc.__gmon_start__() != NULL) {\n      reloc.__gmon_start__();\n    }\n  }\n  return;\n}\n```\n"
+    }
+]

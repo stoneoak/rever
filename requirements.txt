@@ -1,0 +1,4 @@
+agno==1.4.7
+ollama==0.4.8
+pydotplus==2.0.2
+networkx==3.4.2
